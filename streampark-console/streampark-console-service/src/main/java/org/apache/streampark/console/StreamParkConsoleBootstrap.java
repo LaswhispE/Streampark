@@ -17,6 +17,7 @@
 
 package org.apache.streampark.console;
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.apache.streampark.console.base.config.SpringProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Slf4j
 @SpringBootApplication
 @EnableScheduling
+@EnableKnife4j
 public class StreamParkConsoleBootstrap extends SpringBootServletInitializer {
 
   public static void main(String[] args) throws Exception {

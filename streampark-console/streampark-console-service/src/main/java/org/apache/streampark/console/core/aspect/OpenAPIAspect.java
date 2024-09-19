@@ -1,5 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
+/* * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
@@ -12,8 +11,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * limitations under the License.*/
 
 package org.apache.streampark.console.core.aspect;
 
@@ -53,8 +51,21 @@ public class OpenAPIAspect {
 
   private final Set<String> openapiWhitelist = new HashSet<>();
 
+  public boolean isPathWhitelisted(String path) {
+    // 检查是否有任何白名单条目匹配请求路径的前缀
+    for (String whitelistedPath : openapiWhitelist) {
+      if (path.startsWith(whitelistedPath)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @PostConstruct
   public void initOpenapiWhitelist() {
+
+    // 手动添加 "/flink/app" 到白名单集合
+    openapiWhitelist.add("/flink/app");
     String whiteLists = SpringProperties.getProperty("streampark.openapi.white-list");
     if (StringUtils.isNotBlank(whiteLists)) {
       String[] whiteList = whiteLists.trim().split("\\s|,");
@@ -88,7 +99,8 @@ public class OpenAPIAspect {
       OpenAPI openAPI = methodSignature.getMethod().getAnnotation(OpenAPI.class);
       if (openAPI == null) {
         String url = request.getRequestURI();
-        if (openapiWhitelist.contains(url)) {
+        //          if (openapiWhitelist.contains(url))
+        if (isPathWhitelisted(url)) {
           log.info("request by openapi white-list: {} ", url);
         } else {
           throw new UnsupportedOperationException("Openapi unsupported: " + url);

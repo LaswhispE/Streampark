@@ -66,9 +66,18 @@ public class ShiroConfig {
     filterChainDefinitionMap.put("/*.ico", "anon");
     filterChainDefinitionMap.put("/", "anon");
     filterChainDefinitionMap.put("/proxy/**", "anon");
+
+    filterChainDefinitionMap.put("/webjars/**", "anon");
+    filterChainDefinitionMap.put("/swagger-resources/**", "anon");
+    filterChainDefinitionMap.put("/v2/api-docs/**", "anon");
+    filterChainDefinitionMap.put("/v3/api-docs/**", "anon");
+    filterChainDefinitionMap.put("/api-docs/**", "anon"); // 用于访问 Swagger JSON
+    filterChainDefinitionMap.put("/doc.html", "anon"); // Knife4j 的 UI
+    filterChainDefinitionMap.put("/swagger-ui/**", "anon"); // Swagger 的 UI
+
     filterChainDefinitionMap.put("/**", "jwt");
 
-    shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+      shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
     return shiroFilterFactoryBean;
   }
