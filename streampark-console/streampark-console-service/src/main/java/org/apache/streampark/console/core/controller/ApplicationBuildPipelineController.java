@@ -31,6 +31,10 @@ import org.apache.streampark.flink.packer.pipeline.PipelineType;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,6 +50,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequestMapping("flink/pipe")
+@Tag(name = "作业构建流程 flink/pipe")
 public class ApplicationBuildPipelineController {
 
   @Autowired private AppBuildPipeService appBuildPipeService;
@@ -65,6 +70,20 @@ public class ApplicationBuildPipelineController {
    * @param forceBuild forced start pipeline or not
    * @return Whether the pipeline was successfully started
    */
+  @Operation(
+      summary = "build 构建作业",
+      parameters = {
+        @Parameter(
+            name = "appId",
+            description = "作业id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "forceBuild",
+            description = "是否强制构建",
+            required = true,
+            schema = @Schema(type = "integer", format = "boolean")),
+      })
   @PermissionScope(app = "#appId")
   @PostMapping(value = "build")
   @RequiresPermissions("app:create")

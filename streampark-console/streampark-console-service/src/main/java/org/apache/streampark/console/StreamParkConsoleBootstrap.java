@@ -17,9 +17,9 @@
 
 package org.apache.streampark.console;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.apache.streampark.console.base.config.SpringProperties;
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;

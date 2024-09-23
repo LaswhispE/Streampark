@@ -51,8 +51,8 @@ public class OpenAPIAspect {
 
   private final Set<String> openapiWhitelist = new HashSet<>();
 
+  // Check if there are any whitelist entries that match the prefix of the request path
   public boolean isPathWhitelisted(String path) {
-    // 检查是否有任何白名单条目匹配请求路径的前缀
     for (String whitelistedPath : openapiWhitelist) {
       if (path.startsWith(whitelistedPath)) {
         return true;
@@ -64,8 +64,6 @@ public class OpenAPIAspect {
   @PostConstruct
   public void initOpenapiWhitelist() {
 
-    // 手动添加 "/flink/app" 到白名单集合
-    openapiWhitelist.add("/flink/app");
     String whiteLists = SpringProperties.getProperty("streampark.openapi.white-list");
     if (StringUtils.isNotBlank(whiteLists)) {
       String[] whiteList = whiteLists.trim().split("\\s|,");
@@ -99,7 +97,7 @@ public class OpenAPIAspect {
       OpenAPI openAPI = methodSignature.getMethod().getAnnotation(OpenAPI.class);
       if (openAPI == null) {
         String url = request.getRequestURI();
-        //          if (openapiWhitelist.contains(url))
+        // if (openapiWhitelist.contains(url))
         if (isPathWhitelisted(url)) {
           log.info("request by openapi white-list: {} ", url);
         } else {

@@ -17,10 +17,6 @@
 
 package org.apache.streampark.console.core.controller;
 
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.streampark.common.util.Utils;
 import org.apache.streampark.common.util.YarnUtils;
 import org.apache.streampark.console.base.domain.RestRequest;
@@ -39,6 +35,10 @@ import org.apache.streampark.console.core.service.ApplicationService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,9 +46,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,10 +58,7 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("flink/app")
-
-@Tag(name = "用户接口", description = "用户接口")
-
-
+@Tag(name = "作业操作 flink/app")
 public class ApplicationController {
 
   @Autowired private ApplicationService applicationService;
@@ -73,12 +67,15 @@ public class ApplicationController {
 
   @Autowired private ApplicationLogService applicationLogService;
 
-
-  @Operation(summary = "根据id查询作业",
+  @Operation(
+      summary = "get id查询作业",
       parameters = {
-          @Parameter(name = "param1", description = "id", required = true),
-      }
-  )
+        @Parameter(
+            name = "id",
+            description = "id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+      })
   @PostMapping("get")
   @PermissionScope(app = "#app.id")
   @RequiresPermissions("app:detail")
@@ -87,30 +84,105 @@ public class ApplicationController {
     return RestResponse.success(application);
   }
 
-  @Operation(summary = "创建作业",
+  @Operation(
+      summary = "create 创建作业",
       parameters = {
-          @Parameter(name = "id", description = "id", required = true, schema = @Schema(type = "integer", format = "int64")),
-          @Parameter(name = "jobType", description = "作业模式", required = true, schema = @Schema(type = "integer", format = "int32")),
-          @Parameter(name = "appType", description = "app类型", required = true, schema = @Schema(type = "integer", format = "int32")),
-          @Parameter(name = "executionMode", description = "运行模式", required = true, schema = @Schema(type = "integer", format = "int32")),
-          @Parameter(name = "versionId", description = "flink版本", required = true, schema = @Schema(type = "integer", format = "int64")),
-          @Parameter(name = "options", description = "选项设置", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "dynamicProperties", description = "动态参数", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "resolveOrder", description = "类加载顺序", required = true, schema = @Schema(type = "integer", format = "int64")),
-          @Parameter(name = "resourceFrom", description = "资源来源", required = true, schema = @Schema(type = "integer", format = "int64")),
-          @Parameter(name = "k8sNamespace", description = "k8s命名空间", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "flinkImage", description = "flink版本", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "k8sPodTemplate", description = "k8s Pod模版", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "k8sHadoopIntegration", description = "是否启用Hadoop配置", required = false, schema = @Schema(type = "boolean")),
-          @Parameter(name = "jar", description = "jar包名称", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "dependency", description = "依赖jar包", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "k8sRestExposedType", description = "k8s服务对外类型", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "teamId", description = "团队id", required = true, schema = @Schema(type = "integer", format = "int64")),
-          @Parameter(name = "mainClass", description = "主类名", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "jobName", description = "作业名称", required = true, schema = @Schema(type = "String")),
-          @Parameter(name = "args", description = "程序参数", required = true, schema = @Schema(type = "String")),
-      }
-  )
+        @Parameter(
+            name = "jobType",
+            description = "作业模式",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "appType",
+            description = "app类型",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "executionMode",
+            description = "运行模式",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "versionId",
+            description = "flink版本",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "options",
+            description = "选项设置（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "dynamicProperties",
+            description = "动态参数（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "resolveOrder",
+            description = "类加载顺序",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "resourceFrom",
+            description = "资源来源",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "k8sNamespace",
+            description = "k8s命名空间",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "flinkImage",
+            description = "flink版本",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sPodTemplate",
+            description = "k8s Pod模版",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sHadoopIntegration",
+            description = "是否启用Hadoop配置",
+            required = false,
+            schema = @Schema(type = "boolean")),
+        @Parameter(
+            name = "jar",
+            description = "jar包名称",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "dependency",
+            description = "依赖jar包",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sRestExposedType",
+            description = "k8s服务对外类型",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "teamId",
+            description = "团队id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "mainClass",
+            description = "主类名",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "jobName",
+            description = "作业名称",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "args",
+            description = "程序参数（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+      })
   @PermissionScope(team = "#app.teamId")
   @PostMapping("create")
   @RequiresPermissions("app:create")
@@ -119,6 +191,25 @@ public class ApplicationController {
     return RestResponse.success(saved);
   }
 
+  @Operation(
+      summary = "copy 复制作业",
+      parameters = {
+        @Parameter(
+            name = "id",
+            description = "作业id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "jobName",
+            description = "作业名称",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "teamId",
+            description = "团队id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+      })
   @PermissionScope(app = "#app.id", team = "#app.teamId")
   @PostMapping(value = "copy")
   @RequiresPermissions("app:copy")
@@ -131,6 +222,110 @@ public class ApplicationController {
         : RestResponse.success(true).data(data);
   }
 
+  @Operation(
+      summary = "update 修改作业",
+      parameters = {
+        @Parameter(
+            name = "id",
+            description = "id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "jobType",
+            description = "作业模式",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "appType",
+            description = "app类型",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "executionMode",
+            description = "运行模式",
+            required = true,
+            schema = @Schema(type = "integer", format = "int32")),
+        @Parameter(
+            name = "versionId",
+            description = "flink版本",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "options",
+            description = "选项设置（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "dynamicProperties",
+            description = "动态参数（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "resolveOrder",
+            description = "类加载顺序",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "resourceFrom",
+            description = "资源来源",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "k8sNamespace",
+            description = "k8s命名空间",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "flinkImage",
+            description = "flink版本",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sPodTemplate",
+            description = "k8s Pod模版",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sHadoopIntegration",
+            description = "是否启用Hadoop配置",
+            required = false,
+            schema = @Schema(type = "boolean")),
+        @Parameter(
+            name = "jar",
+            description = "jar包名称",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "dependency",
+            description = "依赖jar包",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "k8sRestExposedType",
+            description = "k8s服务对外类型",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "teamId",
+            description = "团队id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "mainClass",
+            description = "主类名",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "jobName",
+            description = "作业名称",
+            required = true,
+            schema = @Schema(type = "String")),
+        @Parameter(
+            name = "args",
+            description = "程序参数（可不填）",
+            required = true,
+            schema = @Schema(type = "String")),
+      })
   @AppUpdated
   @PermissionScope(app = "#app.id")
   @PostMapping("update")
@@ -250,6 +445,15 @@ public class ApplicationController {
     return RestResponse.success(backups);
   }
 
+  @Operation(
+      summary = "optionlog 操作日志 查JobManager URL",
+      parameters = {
+        @Parameter(
+            name = "appId",
+            description = "作业id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+      })
   @PostMapping("optionlog")
   @PermissionScope(app = "#log.appId", team = "#log.teamId")
   public RestResponse log(ApplicationLog log, RestRequest request) {
@@ -291,6 +495,7 @@ public class ApplicationController {
     }
   }
 
+  @Operation(summary = "upload 上传jar包")
   @PostMapping("upload")
   @RequiresPermissions("app:create")
   public RestResponse upload(MultipartFile file) throws Exception {
