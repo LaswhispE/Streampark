@@ -17,6 +17,10 @@
 
 package org.apache.streampark.console.core.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.streampark.console.base.domain.RestRequest;
 import org.apache.streampark.console.base.domain.RestResponse;
 import org.apache.streampark.console.base.exception.InternalException;
@@ -42,11 +46,21 @@ import javax.annotation.Nullable;
 @Validated
 @RestController
 @RequestMapping("flink/savepoint")
+@Tag(name = "作业savepoint",description = "flink/savepoint")
 public class SavepointController {
 
   @Autowired private ApplicationService applicationService;
 
   @Autowired private SavepointService savepointService;
+
+    @Operation(
+        parameters = {
+            @Parameter(
+                name = "appId",
+                description = "作业id",
+                required = true,
+                schema = @Schema(type = "integer", format = "int64")),
+        })
 
   @PostMapping("history")
   @PermissionScope(app = "#sp.appId", team = "#sp.teamId")
@@ -64,6 +78,20 @@ public class SavepointController {
     Boolean deleted = savepointService.delete(sp.getId(), application);
     return RestResponse.success(deleted);
   }
+
+    @Operation(
+        parameters = {
+            @Parameter(
+                name = "appId",
+                description = "作业id",
+                required = true,
+                schema = @Schema(type = "integer", format = "int64")),
+            @Parameter(
+                name = "savepointPath",
+                description = "savepoint路径",
+                required = false,
+                schema = @Schema(type = "String")),
+        })
 
   @PostMapping("trigger")
   @RequiresPermissions("savepoint:trigger")

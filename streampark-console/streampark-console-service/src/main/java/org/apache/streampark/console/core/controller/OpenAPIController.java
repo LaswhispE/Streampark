@@ -17,6 +17,7 @@
 
 package org.apache.streampark.console.core.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.streampark.console.base.domain.RestResponse;
 import org.apache.streampark.console.core.annotation.OpenAPI;
 import org.apache.streampark.console.core.annotation.PermissionScope;
@@ -39,6 +40,7 @@ import javax.validation.constraints.NotNull;
 @Validated
 @RestController
 @RequestMapping("openapi")
+@Tag(name = "作业openapi",description = "openapi")
 public class OpenAPIController {
 
   @Autowired private OpenAPIComponent openAPIComponent;
