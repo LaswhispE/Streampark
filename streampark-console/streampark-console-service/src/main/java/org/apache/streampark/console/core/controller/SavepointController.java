@@ -17,10 +17,6 @@
 
 package org.apache.streampark.console.core.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.streampark.console.base.domain.RestRequest;
 import org.apache.streampark.console.base.domain.RestResponse;
 import org.apache.streampark.console.base.exception.InternalException;
@@ -33,6 +29,10 @@ import org.apache.streampark.console.core.service.SavepointService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -46,22 +46,21 @@ import javax.annotation.Nullable;
 @Validated
 @RestController
 @RequestMapping("flink/savepoint")
-@Tag(name = "作业savepoint",description = "flink/savepoint")
+@Tag(name = "作业savepoint", description = "flink/savepoint")
 public class SavepointController {
 
   @Autowired private ApplicationService applicationService;
 
   @Autowired private SavepointService savepointService;
 
-    @Operation(
-        parameters = {
-            @Parameter(
-                name = "appId",
-                description = "作业id",
-                required = true,
-                schema = @Schema(type = "integer", format = "int64")),
-        })
-
+  @Operation(
+      parameters = {
+        @Parameter(
+            name = "appId",
+            description = "作业id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+      })
   @PostMapping("history")
   @PermissionScope(app = "#sp.appId", team = "#sp.teamId")
   public RestResponse history(Savepoint sp, RestRequest request) {
@@ -79,20 +78,19 @@ public class SavepointController {
     return RestResponse.success(deleted);
   }
 
-    @Operation(
-        parameters = {
-            @Parameter(
-                name = "appId",
-                description = "作业id",
-                required = true,
-                schema = @Schema(type = "integer", format = "int64")),
-            @Parameter(
-                name = "savepointPath",
-                description = "savepoint路径",
-                required = false,
-                schema = @Schema(type = "String")),
-        })
-
+  @Operation(
+      parameters = {
+        @Parameter(
+            name = "appId",
+            description = "作业id",
+            required = true,
+            schema = @Schema(type = "integer", format = "int64")),
+        @Parameter(
+            name = "savepointPath",
+            description = "savepoint路径",
+            required = false,
+            schema = @Schema(type = "String")),
+      })
   @PostMapping("trigger")
   @RequiresPermissions("savepoint:trigger")
   @PermissionScope(app = "#savepoint.appId", team = "#savepoint.teamId")

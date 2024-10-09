@@ -58,7 +58,7 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("flink/app")
-@Tag(name = "作业操作",description = "flink/app")
+@Tag(name = "作业操作", description = "flink/app")
 public class ApplicationController {
 
   @Autowired private ApplicationService applicationService;

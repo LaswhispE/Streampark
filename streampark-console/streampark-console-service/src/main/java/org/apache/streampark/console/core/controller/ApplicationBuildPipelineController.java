@@ -50,7 +50,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequestMapping("flink/pipe")
-@Tag(name = "作业构建流程",description = "flink/pipe")
+@Tag(name = "作业构建流程", description = "flink/pipe")
 public class ApplicationBuildPipelineController {
 
   @Autowired private AppBuildPipeService appBuildPipeService;

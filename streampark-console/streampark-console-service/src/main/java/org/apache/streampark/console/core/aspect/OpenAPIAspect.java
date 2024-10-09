@@ -97,7 +97,7 @@ public class OpenAPIAspect {
       OpenAPI openAPI = methodSignature.getMethod().getAnnotation(OpenAPI.class);
       if (openAPI == null) {
         String url = request.getRequestURI();
-//         if (openapiWhitelist.contains(url)){
+        //         if (openapiWhitelist.contains(url)){
         if (isPathWhitelisted(url)) {
           log.info("request by openapi white-list: {} ", url);
         } else {
